@@ -1,0 +1,67 @@
+Installation
+Git Bash Install ?
+
+
+IAS configuration
+EC2
+provisioning
+configuration
+deployment
+monitoring
+security
+
+
+Pass
+EBS and ECS, EKS  docker Kubrnets
+Readymade Console asper requirnment
+On demand
+
+
+FaaS
+lambda
+
+ECS Docker Container
+widly used 
+
+Youtube Video :  
+EC2 Instance and SSH to EC2
+
+
+======================================================================================================================
+Day 2 Feb 17
+
+#!/bin/sh
+curl -L https://us-west-2-aws-training.s3.amazonaws.com/awsu-spl/spl03-working-elb/static/bootstrap-elb.sh|sh
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

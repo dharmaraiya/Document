@@ -1,0 +1,451 @@
+
+------------------Python Django Application------------------------------
+s3sampleapplicationec2
+
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install -y python-pip python-dev build-essential
+pip install --upgrade pip
+sudo pip install django==1.11 requests boto3 django-bootstrap3 pillow 
+django-admin.py startproject s3pythonapp
+
+https://stackoverflow.com/questions/42196124/there-are-errors-when-i-install-django-by-git
+
+
+sudo git clone https://github.com/maheshkharwadkar/Django-Application.git
+colibris3applicationsample
+
+1. Created ubuntu machine
+   Crete Role to get s3fullaccess from ec2
+   create bucket
+   create ELB
+   
+2. Type bash script in userdata
+3. cd /etc/systemd/system
+4. vi django.service -- Copy the code in it.
+   sudo systemctl start django.service
+   sudo systemctl enable django.service
+
+
+
+
+
+---------------------
+AWS Application setup
+
+ELB: SampleEc2S3LoadBalancer
+Security Group: s3app  (created in AWS instance)
+Targer Group: EC2S3Group
+Timeout: 10 sec
+
+
+
+1.Create S3 Bucket
+  s34dharma (to be changed) updated name
+2.Crete Iam role
+   Role Name: s3sampleapplicationec2
+           s3sampleapplicationec2
+           
+3. Create Ubuntu 16.04 machine with userdata.sh script
+
+userdata.sh
+#!/bin/bash
+sudo apt-get update -y
+sudo apt-get upgrade -y
+sudo apt-get install -y python-pip python-dev build-essential
+pip install --upgrade pip
+sudo pip install django requests boto3 django-bootstrap3 pillow 
+django-admin.py startproject s3pythonapp
+
+
+
+   sudo apt-get update -y
+   
+   sudo apt-get install -y python-pip python-dev build-essential
+   
+   
+    sudo pip install django==1.11 requests boto3 django-bootstrap3 pillow  (it will create django-admin.py)
+    django-admin.py startproject s3pythonapp   (django is webframe work for python this command will create directory called s3pythonapp)
+    
+    git clone https://github.com/maheshkharwadkar/Django-Application.git
+
+
+root@ip-172-31-29-182:/home/ubuntu# django-admin.py startproject s3pythonapp
+CommandError: '/home/ubuntu/s3pythonapp' already exists
+root@ip-172-31-29-182:/home/ubuntu# git clone https://github.com/maheshkharwadkar/Django-Application.git
+Cloning into 'Django-Application'...
+remote: Enumerating objects: 38, done.
+remote: Total 38 (delta 0), reused 0 (delta 0), pack-reused 38
+Unpacking objects: 100% (38/38), done.
+root@ip-172-31-29-182:/home/ubuntu# ls -ltr
+total 8
+drwxr-xr-x 3 root root 4096 Mar 17 03:24 s3pythonapp
+drwxr-xr-x 5 root root 4096 Mar 17 04:45 Django-Application
+root@ip-172-31-29-182:/home/ubuntu# cd Django-Application/
+
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp/s3pythonapp# vi settings.py 
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp/s3pythonapp# cd ..
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp# ls -ltr
+total 188
+-rw-r--r-- 1 root root    809 Mar 17 04:45 manage.py
+-rw-r--r-- 1 root root 184320 Mar 17 04:45 db.sqlite3
+drwxr-xr-x 3 root root   4096 Mar 17 05:02 s3pythonapp
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp# 
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp# python manage.py runserver 0.0.0.0:80
+Performing system checks...
+
+System check identified no issues (0 silenced).
+March 17, 2019 - 05:06:01
+Django version 1.11.20, using settings 's3pythonapp.settings'
+Starting development server at http://0.0.0.0:80/
+Quit the server with CONTROL-C.
+
+
+Error
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp# netstat -tulpn
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address           Foreign Address         State       PID/Program name    
+tcp        0      0 127.0.0.53:53           0.0.0.0:*               LISTEN      8438/systemd-resolv 
+tcp        0      0 0.0.0.0:22              0.0.0.0:*               LISTEN      848/sshd            
+tcp6       0      0 :::22                   :::*                    LISTEN      848/sshd            
+udp        0      0 127.0.0.53:53           0.0.0.0:*                           8438/systemd-resolv 
+udp        0      0 172.31.29.182:68        0.0.0.0:*                           8422/systemd-networ 
+
+
+netstate -9 kill proccessID
+root@ip-172-31-29-182:/home/ubuntu/Django-Application/s3pythonapp# python manage.py runsevrer 0.0.0.0:80
+
+
+   
+
+ 
+4. Add security group with Port 22,80
+
+5. Do SSH
+   scp -i "key path" source floder ubuntu@ip:/home/ubuntu/s3pythonapp
+   Copy s3pythonapp to /home/ubuntu/s3pythonapp
+
+    Changes in settings.py  (django config file)
+      1. change S3 Bucket Name
+	    line no.- 91 : Change S3 bucket name
+      2. ALLOWED_HOSTS = ["*"]
+	      line no.- 30 : ALLOWED_HOSTS = ["*"]
+      3. Change ELB DNS Name 
+			line no.- 45 : Change ELB DNS Name
+  
+ 
+  
+    cd /etc/systemd/system/
+    netstat -tulpn
+    sudo vi django.service
+    sudo systemctl start django.service
+    sudo systemctl enable django.service
+           
+6. Create AMI - s3ApplicationAMI
+
+
+7. Create Autoscaling Group
+     LC - s3ec2sampleapp
+          Role Name s3sampleapplicationec2
+     Select Security group- s3app
+     AG Name: s3ec2group
+     Give all the subnets in the region
+     Receive Traffic from one or more Load Balancer
+     Target Group- Ec2S3Group
+     Configure Auto Scaling Policies
+       Increase Group Size
+         CPU utilization >= 60% (uncheck send notification)
+       Decrease Group Size
+         <=30%
+
+---------------------Git hub Link
+https://github.com/maheshkharwadkar/Django-Application
+
+  
+ sudo dpkg --configure -a
+ 
+cd /home/ubuntu/Django-Application
+sudo cp django.service /etc/systemd/system/
+
+cd /home/ubuntu/
+git clone https://github.com/maheshkharwadkar/Django-Application.git
+sudo vi django.service
+
+sudo dpkg --configure -a
+
+------------------------------------------------------------
+
+manage.py is the main service is the main file for djnago service
+forms.py and the views.py is for viewing purpose 
+
+
+cd /etc/systemd/system/
+sudo vi django.service
+    
+#!bin/sh
+
+[Unit]
+Description=Sample S3 Django Application
+After=network.target
+
+[Service]
+PIDFILE=/var/run/cric.pid
+ExecStart=/usr/bin/python /home/ubuntu/s3pythonapp/manage.py runserver 0.0.0.0:80
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target
+
+
+sudo systemctl start django.service
+sudo systemctl enable django.service
+
+
+s3ApplicationAMI
+
+s3ec2sampleapp
+
+s3ec2group
+Notes.txt
+Displaying Notes.txt.
+
+
+
+=======================================================
+
+Ubuntu AMI
+
+#Install Python version 3
+sudo yum install centos-release-scl
+sudo yum install rh-python36
+
+scl enable rh-python36 bash  #To set paython3 as default
+
+
+
+Programiz.com
+
+python3 pythontest.py
+
+========================
+=====Python - for loop===========
+
+def print_multiplication_table(table,start,end):
+  for i in range (start,end):
+    print (f"{table} * {i} = {table *i}")
+    
+print_multiplication_table(5,1,11)
+
+=============================================
+
+
+def print_multi(table,start,end):
+    for i  in range(start,end ):
+#        print(f"{table} * {i} = {table * i}")
+         print("{0} * {1} = {2}".format(table,i,table*i))
+print_multi(5,1,11)
+
+#Output
+[root@localhost Documents]# python pythontest.py
+5 * 1 = 5
+5 * 2 = 10
+5 * 3 = 15
+5 * 4 = 20
+5 * 5 = 25
+5 * 6 = 30
+5 * 7 = 35
+5 * 8 = 40
+5 * 9 = 45
+5 * 10 = 50
+==================================================
+List in python are arrays in other programming languages
+List are zero based index 
+
+#!/usr/local/bin/python3.6 
+ users = ["user1","user2","user3"]   #define list
+ print (users[0])  #it will call the list , List are zero based index 
+ #Accessing last element in list
+ print (users[len(users)-1])  #len of user = 0
+ print (users[-1])
+ print (users[-2])
+
+#Add or move elements in the list
+ users[1] = "jdoe"
+ print (users)
+ users.append("peter")
+ print users
+ 
+ users=[]
+ users.append("mahesh")
+ print(users)
+ 
+ #insert add an item at specific index
+ users.insert(1,"mary") #it will add mary after mahesh as it's added array 1
+ users.remove("mahesh")
+ 
+ print users
+ ###########################Looping####################################
+ 
+ users =[]
+ users.append("ahmad")
+ users.append("john")
+ users.append("linda")
+ users.insert(1,"mary")
+ users.append("john")
+ print (users)
+#Sorting a list
+#users.sort() #This will sort a list
+ print (sorted(users))
+ print (users)
+ sorted_users = sorted(users)
+
+#Slicing 
+users =["user1","user2","user3","user4"]
+print (users[1:3])
+print(users[1:]) #starting from second to lasst
+print (users[1::-1])
+print (users[:3]) #print the first 3rd items
+
+
+
+=====================================================================
+
+>>> users = ["user1", "user2", "user3", "user4"]
+>>> print (users[1:3])
+['user2', 'user3']
+>>> print (users[1:3:2])
+['user2']
+>>> print (users[1:])
+['user2', 'user3', 'user4']
+>>> print (users[1::2])  #it will jump 2
+['user2', 'user4']
+>>> users = ["user1", "user2", "user3", "user4","user5", "user6", "user7"]
+>>> print (users[1::2])
+['user2', 'user4', 'user6']
+>>> 
+
+============================================================================
+
+
+####################################3#List Comprehension
+# Your security team said every  username contains 1 didgit
+# for example above user list is not valid we have to loop through the list and digit for the same
+users = ["user1", "user2", "user3", "user4"]  
+num = "123"
+  #traditional way 
+  for i in range(0,len(users)):
+   users[i]= users[i] + num
+  print (users)
+  
+  users = [u+num for u in users]
+  print (users)
+
+===========================================================================
+
+####################################3#List Comprehension
+# Your security team said every  username contains 1 didgit
+# for example above user list is not valid we have to loop through the list and digit for the same
+users = ["user1", "user2", "user3", "user4"]   
+num = "123"
+  #traditional way 
+  for i in range(0,len(users)):
+   users[i]= users[i] + num
+  print (users)
+  
+  users = [u+num for u in users]
+  print (users)
+
+#Strings in python considered as list of charecters
+ message = "Hello World"
+ for s in message
+   print (s)
+    
+ message = [s + " " for s in message]
+ print(''.join(message)) #(which joins list of charecter to string)
+ 
+ print('*'.join(message))
+ 
+==============================================
+################Dictionaries###########################
+#It is simmilar to lists excepts that it aceepts item as key value pair
+#user = ['mahesh','35','Devops Engoneer','US']
+  user = {
+    "username":"mahesh",
+    "age":"35",
+    "job":"Devops Engoneer",
+    "country":"US"
+}  
+
+print ("The Username is",user["username"],", he is",user["age"],"years old","he works as",user["job"],"and lives in",user["country"] )
+
+=============================================
+
+
+###############Loop Through Dictionary##########################
+langs = {
+"en":"English",
+"es":"Spanish",
+"ar":"Arabic",
+"it":"Italian"
+}
+
+
+for key,value in langs.items():
+  print(key,":",value)
+  
+=============================================
+
+[centos@ip-172-31-47-2 src]$ 
+
+
+
+
+
+
+
+
+
+
+ 
+ 
+  
+
+
+  
+  
+  
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
